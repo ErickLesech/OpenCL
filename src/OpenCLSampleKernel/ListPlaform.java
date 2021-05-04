@@ -3,7 +3,7 @@ package OpenCLSampleKernel;
 import static org.jocl.CL.*;
 import org.jocl.*;
 
-public class ListOpenCL{
+public class ListPlaform{
 	
 	private static String programSource = 
 			"__kernel void "+

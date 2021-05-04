@@ -1,27 +1,18 @@
 package OpenCLSampleKernel;
 
-import static org.jocl.CL.CL_DEVICE_TYPE_ALL;
-import static java.lang.System.out;
-import static org.jocl.CL.CL_DEVICE_NAME;
-
-
-import static org.jocl.CL.clGetPlatformIDs;
-import static org.jocl.CL.clGetDeviceInfo;
+import static org.jocl.CL.*;
 
 import org.jocl.Pointer;
 import org.jocl.cl_device_id;
 import org.jocl.cl_platform_id;
 
-import com.jogamp.opencl.CLContext;
-import com.jogamp.opencl.CLDevice;
-
-import static org.jocl.CL.clGetDeviceIDs;
 
 
 public class ListDevice {
+	
 
 	public static void main(String[] args) {
-		char[] info = null;
+		int []deviceInfo = {CL_DEVICE_NAME,CL_DEVICE_VENDOR,CL_DRIVER_VERSION,CL_DEVICE_VERSION,CL_DEVICE_PROFILE};
 		
     	long []infoSize = new long[1];
     	int []deviceCompteur = new int[1];
@@ -38,32 +29,37 @@ public class ListDevice {
     	
     	//Devices 
     	
-    	clGetDeviceIDs(platform[0],CL_DEVICE_TYPE_ALL,0,null,deviceCompteur);
-    	device =  new cl_device_id[deviceCompteur[0]];
-    	clGetDeviceIDs(platform[0],CL_DEVICE_TYPE_ALL,deviceCompteur[0],device,null);
+    	for(int i = 0; i < platformCompteur[0]; i++) {
+    	
+    		clGetDeviceIDs(platform[0],CL_DEVICE_TYPE_ALL,0,null,deviceCompteur);
+    		device =  new cl_device_id[deviceCompteur[0]];
+    		clGetDeviceIDs(platform[0],CL_DEVICE_TYPE_ALL,deviceCompteur[0],device,null);
+    		
+    		
+    		System.out.print("Platform : ");
+    		clGetPlatformInfo(platform[0],CL_PLATFORM_NAME,0,null,infoSize);
+    		int taillePlatform = (int)infoSize[0];
+        	byte[] bufferPlatform = new byte[taillePlatform];
+        	Pointer ptr_platform= Pointer.to(bufferPlatform);
+        	clGetPlatformInfo(platform[0],CL_PLATFORM_NAME,taillePlatform,ptr_platform,null);
+			System.out.println(new String(bufferPlatform));
 
     	
-    	for(int i = 0; i < deviceCompteur[0]; i++) {
-    		infoSize = new long[1];
-    		clGetDeviceInfo(device[0],CL_DEVICE_NAME,0,null,infoSize);
-    		int taille = (int)infoSize[0];
-        	System.out.println("taille de info = " + infoSize[0]);
-
-        	info = new char[taille];
-        	System.out.println("taille de info = " + info.length);
-        	Pointer ptr_info = Pointer.to(info);
-        	clGetDeviceInfo(device[0],CL_DEVICE_NAME,taille,ptr_info,null);
-        	
-        	System.out.println("valeur de info "+ new String(info));
-        	
-    	}
-    	
-    	 CLContext context = CLContext.create();
-         System.out.println("created "+context);
-    	
-    	 CLDevice device1 = context.getMaxFlopsDevice();
-         System.out.println("using "+device1);
-    	
+    			for(int j = 0; j < deviceCompteur[0]; j++) {
+    		
+    				
+    				//affichage des différents infos sur le device
+    				for(int k = 0; k < deviceInfo.length; k++) {
+    					
+    					clGetDeviceInfo(device[0],deviceInfo[k],0,null,infoSize);
+    					int taille = (int)infoSize[0];
+    					byte[] buffer = new byte[taille];
+    					Pointer ptr_device = Pointer.to(buffer);
+    					clGetDeviceInfo(device[0],deviceInfo[k],taille,ptr_device,null);
+    					System.out.println(new String(buffer));
+    					
+    				}	
+    			}
+    		}
+		}
 	}
-
-}
