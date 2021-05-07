@@ -6,13 +6,11 @@ import org.jocl.Pointer;
 import org.jocl.cl_device_id;
 import org.jocl.cl_platform_id;
 
-
-
 public class ListDevice {
 	
 
 	public static void main(String[] args) {
-		int []deviceInfo = {CL_DEVICE_NAME,CL_DEVICE_VENDOR,CL_DRIVER_VERSION,CL_DEVICE_VERSION,CL_DEVICE_PROFILE};
+		int []deviceInfo = {CL_DEVICE_NAME,CL_DEVICE_VENDOR,CL_DRIVER_VERSION,CL_DEVICE_VERSION};
 		
     	long []infoSize = new long[1];
     	int []deviceCompteur = new int[1];
